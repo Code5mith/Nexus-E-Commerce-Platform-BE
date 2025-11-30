@@ -5,6 +5,7 @@ from .serializers import ProductSerializer, ProductDetailSerializer, CategorySer
 
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from django.db.models import Q 
 
 User = get_user_model()
 
@@ -132,3 +133,15 @@ def delete_cartitem(request, pk):
     cartitem.delete()
 
     return Response("cart item deleted!", status=204)
+
+@api_view(["GET"])
+def product_search(request):
+    query = request.query_params.get("query")
+    if not query:
+        return Response("No search query provided", status=400)
+    
+    products = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(category__name__icontains=query))
+
+    serializer = ProductSerializer(products, many=True)
+
+    return Response(serializer.data)
