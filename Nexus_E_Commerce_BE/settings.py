@@ -81,29 +81,30 @@ WSGI_APPLICATION = 'Nexus_E_Commerce_BE.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DB = os.getenv("DB")
+# DB = os.getenv("DB")
 
-if not DB:
+# if not DB:
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+# else:
+
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE" : "django.db.backends.postgresql",
+        "NAME" : "railway",
+        "USER" : os.getenv("NEXUS_PG_USER"),
+        "PASSWORD" : os.getenv("NEXUS_PG_PASS"),
+        "HOST" : "trolley.proxy.rlwy.net",
+        "PORT" : os.getenv("NEXUS_PG_PORT")
     }
-else:
-    DATABASES = {
-        'default': {
-            # 'ENGINE': 'django.db.backends.sqlite3',
-            # 'NAME': BASE_DIR / 'db.sqlite3',
-            "ENGINE" : "django.db.backends.postgresql",
-            "NAME" : "railway",
-            "USER" : os.getenv("NEXUS_PG_USER"),
-            "PASSWORD" : os.getenv("NEXUS_PG_PASS"),
-            "HOST" : "trolley.proxy.rlwy.net",
-            "PORT" : os.getenv("NEXUS_PG_PORT")
-        }
-    }
+}
 
 
 # Password validation
