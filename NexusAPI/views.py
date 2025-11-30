@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .models import Product, Category, Cart, CartItem
-from .serializers import ProductSerializer, ProductDetailSerializer, CategorySerializer, CategoryDetailSerializer, CartSerializer, CartItemSerializer
+from .models import Product, Category, Cart, CartItem, Review, Wishlist
+from .serializers import ProductSerializer, ProductDetailSerializer, CategorySerializer, CategoryDetailSerializer, CartSerializer, CartItemSerializer, ReviewSerializer, WishListSerailzer
 
 from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 @api_view(['GET'])
 def product_list(request):
@@ -63,3 +66,69 @@ def update_cart_item_quantity(request):
     serializer = CartItemSerializer(cartitem)
 
     return Response({"data" : serializer.data, "message" : "cart updated successfully!"})
+
+@api_view(["POST"])
+def add_review(request):
+    User = get_user_model()
+
+    product_id = request.data.get("product_id")
+    email = request.data.get("email")
+    rating = request.data.get("rating")
+    review = request.data.get("review")
+
+    product = Product.objects.get(id=product_id)
+    user = User.objects.get(email=email)
+
+    if Review.objects.filter(product=product, user=user).exists():
+        return Response("You have already reviewed this product", status=400)
+
+    review = Review.objects.create(product=product, user=user, rating=rating, review=review)
+    serializer = ReviewSerializer(review)
+    
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def update_review(request, pk):
+    review = Review.objects.get(id=pk) 
+    rating = request.data.get("rating")
+    review_text = request.data.get("review")
+
+    review.rating = rating 
+    review.review = review_text
+    review.save()
+
+    serializer = ReviewSerializer(review)
+    return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+def delete_review(request, pk):
+    review = Review.objects.get(id=pk) 
+    review.delete()
+
+    return Response("Review deleted successfully!", status=204)
+
+@api_view(["POST"])
+def add_to_wishlist(request):
+    email = request.data.get("email")
+    product_id = request.data.get("product_id")
+
+    user = User.objects.get(email=email)
+    product = Product.objects.get(id=product_id)
+
+    wishlist = Wishlist.objects.filter(user=user, product=product)
+    if wishlist:
+        wishlist.delete()
+        return Response("Product removed from wishlist!", status=204)
+    
+    new_wishlist = Wishlist.objects.create(user=user, product=product)
+    serializer = WishListSerailzer(new_wishlist)
+    return Response(serializer.data) 
+
+
+@api_view(["DELETE"])
+def delete_cartitem(request, pk):
+    cartitem = CartItem.objects.get(id=pk)
+    cartitem.delete()
+
+    return Response("cart item deleted!", status=204)

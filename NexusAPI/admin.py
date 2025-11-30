@@ -14,4 +14,4 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug") 
 admin.site.register(models.Category, CategoryAdmin)
 
-admin.site.register([models.Cart,models.CartItem])
+admin.site.register([models.Cart,models.CartItem, models.Review, models.ProductRating, models.Wishlist])
