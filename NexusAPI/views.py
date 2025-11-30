@@ -153,48 +153,48 @@ def product_search(request):
 
 
 ## stripe payment inegration
-@api_view(['POST'])
-def create_checkout_session(request):
-    cart_code = request.data.get("cart_code")
-    email = request.data.get("email")
-    cart = Cart.objects.get(cart_code=cart_code)
-    try:
-        checkout_session = stripe.checkout.Session.create(
-            customer_email= email,
-            payment_method_types=['card'],
+# @api_view(['POST'])
+# def create_checkout_session(request):
+#     cart_code = request.data.get("cart_code")
+#     email = request.data.get("email")
+#     cart = Cart.objects.get(cart_code=cart_code)
+#     try:
+#         checkout_session = stripe.checkout.Session.create(
+#             customer_email= email,
+#             payment_method_types=['card'],
 
-            line_items=[ #type:ignore
-                {
-                    'price_data': {
-                        'currency': 'usd',
-                        'product_data': {'name': item.product.name},
-                        'unit_amount': int(item.product.price) * 100,  # Amount in cents
-                    },
-                    'quantity': item.quantity,
-                }
-                for item in cart.cartitems.all() #type:ignore
-            ] + [
-                {
-                    'price_data': {
-                        'currency': 'usd',
-                        'product_data': {'name': 'VAT Fee'},
-                        'unit_amount': 500,  # $5 in cents
-                    },
-                    'quantity': 1,
-                }
-            ],
+#             line_items=[ #type:ignore
+#                 {
+#                     'price_data': {
+#                         'currency': 'usd',
+#                         'product_data': {'name': item.product.name},
+#                         'unit_amount': int(item.product.price) * 100,  # Amount in cents
+#                     },
+#                     'quantity': item.quantity,
+#                 }
+#                 for item in cart.cartitems.all() #type:ignore
+#             ] + [
+#                 {
+#                     'price_data': {
+#                         'currency': 'usd',
+#                         'product_data': {'name': 'VAT Fee'},
+#                         'unit_amount': 500,  # $5 in cents
+#                     },
+#                     'quantity': 1,
+#                 }
+#             ],
            
-            mode='payment',
-            success_url="http://localhost:3000/success",
-            cancel_url="http://localhost:3000/cancel",
+#             mode='payment',
+#             success_url="http://localhost:3000/success",
+#             cancel_url="http://localhost:3000/cancel",
 
-            # success_url="https://next-shop-self.vercel.app/success",
-            # cancel_url="https://next-shop-self.vercel.app/failed",
-            metadata = {"cart_code": cart_code}
-        )
-        return Response({'data': checkout_session})
-    except Exception as e:
-        return Response({'error': str(e)}, status=400)
+#             # success_url="https://next-shop-self.vercel.app/success",
+#             # cancel_url="https://next-shop-self.vercel.app/failed",
+#             metadata = {"cart_code": cart_code}
+#         )
+#         return Response({'data': checkout_session})
+#     except Exception as e:
+#         return Response({'error': str(e)}, status=400)
 
 
 # @csrf_exempt
@@ -228,23 +228,23 @@ def create_checkout_session(request):
 
 
 
-def fulfill_checkout(session, cart_code):
+# def fulfill_checkout(session, cart_code):
     
-    order = Order.objects.create(stripe_checkout_id=session["id"],
-        amount=session["amount_total"],
-        currency=session["currency"],
-        customer_email=session["customer_email"],
-        status="Paid")
+#     order = Order.objects.create(stripe_checkout_id=session["id"],
+#         amount=session["amount_total"],
+#         currency=session["currency"],
+#         customer_email=session["customer_email"],
+#         status="Paid")
     
 
-    print(session)
+#     print(session)
 
 
-    cart = Cart.objects.get(cart_code=cart_code)
-    cartitems = cart.cartitems.all() #type:ignore
+#     cart = Cart.objects.get(cart_code=cart_code)
+#     cartitems = cart.cartitems.all() #type:ignore
 
-    for item in cartitems:
-        orderitem = OrderItem.objects.create(order=order, product=item.product, 
-                                             quantity=item.quantity)
-    cart.delete()
+#     for item in cartitems:
+#         orderitem = OrderItem.objects.create(order=order, product=item.product, 
+#                                              quantity=item.quantity)
+#     cart.delete()
 
