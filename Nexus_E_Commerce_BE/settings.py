@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-auehl4+v&i%v!*8y9dfvhdn-7ky28n78ehcyn0hd7sl%v2@xwv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,12 +79,29 @@ WSGI_APPLICATION = 'Nexus_E_Commerce_BE.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DB = os.getenv("DB")
+
+if not DB:
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            # 'ENGINE': 'django.db.backends.sqlite3',
+            # 'NAME': BASE_DIR / 'db.sqlite3',
+            "ENGINE" : "django.db.backends.postgresql",
+            "NAME" : "railway",
+            "USER" : os.getenv("NEXUS_PG_USER"),
+            "PASSWORD" : os.getenv("NEXUS_PG_PASS"),
+            "HOST" : "trolley.proxy.rlwy.net",
+            "PORT" : os.getenv("NEXUS_PG_PORT")
+        }
+    }
 
 
 # Password validation
@@ -121,8 +139,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
+STATIC_ROOT = BASE_DIR/'staticfiles'
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR/'media'
 
 # Default primary key field type
