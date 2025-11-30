@@ -31,7 +31,7 @@ DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = ["https://nexus-e-commerce-platform-be-production.up.railway.app"]
 
-ALLOWED_HOSTS = ["*", "https://nexus-e-commerce-platform-be-production.up.railway.app/"]
+ALLOWED_HOSTS = ["*", "nexus-e-commerce-platform-be-production.up.railway.app"]
 
 
 # Application definition
