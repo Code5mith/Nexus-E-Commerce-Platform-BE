@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-auehl4+v&i%v!*8y9dfvhdn-7ky28n78ehcyn0hd7sl%v2@xwv"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 CSRF_TRUSTED_ORIGINS = ["https://nexus-e-commerce-platform-be-production.up.railway.app"]
 
